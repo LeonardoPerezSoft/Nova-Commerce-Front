@@ -1,9 +1,22 @@
-import { Routes } from '@angular/router';
-import { OrdersComponent } from './orders.component';
+/**
+ * Orders Routing
+ *
+ * Rutas lazy-loaded para feature de órdenes
+ * '' → OrderHistoryComponent (listar órdenes del usuario)
+ * 'create' → CreateOrderComponent (crear orden desde carrito)
+ */
 
-export const ORDERS_ROUTES: Routes = [
+import { Routes } from '@angular/router';
+import { OrderHistoryComponent } from './pages/order-history/order-history.component';
+import { CreateOrderComponent } from './pages/create-order/create-order.component';
+
+export const ordersRoutes: Routes = [
   {
     path: '',
-    component: OrdersComponent,
+    component: OrderHistoryComponent,
+  },
+  {
+    path: 'create',
+    component: CreateOrderComponent,
   },
 ];

@@ -39,7 +39,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadChildren: () =>
           import('./features/products/products.routes').then(
-            (m) => m.PRODUCTS_ROUTES
+            (m) => m.productsRoutes
           ),
       },
       {
@@ -47,7 +47,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadChildren: () =>
           import('./features/orders/orders.routes').then(
-            (m) => m.ORDERS_ROUTES
+            (m) => m.ordersRoutes
           ),
       },
       {
