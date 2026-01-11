@@ -3,33 +3,38 @@ import { Router } from '@angular/router';
 import { authGuard } from './auth.guard';
 import { AuthFacade } from '../services/auth.facade';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { vi, describe, it, beforeEach, expect } from 'vitest';
 
 describe('authGuard', () => {
-  let authFacade: jasmine.SpyObj<AuthFacade>;
-  let router: jasmine.SpyObj<Router>;
+  let authFacade: AuthFacade;
+  let router: Router;
   let mockRoute: ActivatedRouteSnapshot;
   let mockState: RouterStateSnapshot;
 
   beforeEach(() => {
-    const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['isAuthenticated']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const authFacadeMock = {
+      isAuthenticated: vi.fn(),
+    };
+    const routerMock = {
+      navigate: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: AuthFacade, useValue: authFacadeSpy },
-        { provide: Router, useValue: routerSpy },
+        { provide: AuthFacade, useValue: authFacadeMock },
+        { provide: Router, useValue: routerMock },
       ],
     });
 
-    authFacade = TestBed.inject(AuthFacade) as jasmine.SpyObj<AuthFacade>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    authFacade = TestBed.inject(AuthFacade);
+    router = TestBed.inject(Router);
 
     mockRoute = {} as ActivatedRouteSnapshot;
     mockState = { url: '/admin' } as RouterStateSnapshot;
   });
 
   it('should allow access when user is authenticated', () => {
-    authFacade.isAuthenticated.and.returnValue(true);
+    vi.mocked(authFacade.isAuthenticated).mockReturnValue(true);
 
     const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
@@ -38,7 +43,7 @@ describe('authGuard', () => {
   });
 
   it('should redirect to login when user is NOT authenticated', () => {
-    authFacade.isAuthenticated.and.returnValue(false);
+    vi.mocked(authFacade.isAuthenticated).mockReturnValue(false);
 
     const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 

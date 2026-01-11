@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HasRoleDirective } from './has-role.directive';
 import { AuthFacade } from '../services/auth.facade';
 import { BehaviorSubject } from 'rxjs';
+import { vi, describe, it, beforeEach, expect } from 'vitest';
 
 @Component({
   template: `
@@ -17,7 +18,7 @@ class TestComponent {}
 describe('HasRoleDirective', () => {
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
-  let authFacade: jasmine.SpyObj<AuthFacade>;
+  let authFacade: AuthFacade;
   let authStateSubject: BehaviorSubject<any>;
 
   beforeEach(() => {
@@ -27,17 +28,19 @@ describe('HasRoleDirective', () => {
       roles: [],
     });
 
-    const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['hasAnyRole']);
-    authFacadeSpy.authState$ = authStateSubject.asObservable();
+    const authFacadeMock = {
+      hasAnyRole: vi.fn(),
+      authState$: authStateSubject.asObservable(),
+    };
 
     TestBed.configureTestingModule({
       imports: [TestComponent, HasRoleDirective],
-      providers: [{ provide: AuthFacade, useValue: authFacadeSpy }],
+      providers: [{ provide: AuthFacade, useValue: authFacadeMock }],
     });
 
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
-    authFacade = TestBed.inject(AuthFacade) as jasmine.SpyObj<AuthFacade>;
+    authFacade = TestBed.inject(AuthFacade);
   });
 
   it('should create', () => {
@@ -45,7 +48,7 @@ describe('HasRoleDirective', () => {
   });
 
   it('should show element when user has required role', () => {
-    authFacade.hasAnyRole.and.returnValue(true);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(true);
     fixture.detectChanges();
 
     const element = fixture.nativeElement.querySelector('#admin-only');
@@ -54,7 +57,7 @@ describe('HasRoleDirective', () => {
   });
 
   it('should hide element when user does NOT have required role', () => {
-    authFacade.hasAnyRole.and.returnValue(false);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(false);
     fixture.detectChanges();
 
     const element = fixture.nativeElement.querySelector('#admin-only');
@@ -62,7 +65,7 @@ describe('HasRoleDirective', () => {
   });
 
   it('should work with multiple roles', () => {
-    authFacade.hasAnyRole.and.returnValue(true);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(true);
     fixture.detectChanges();
 
     const element = fixture.nativeElement.querySelector('#multiple-roles');
@@ -70,14 +73,14 @@ describe('HasRoleDirective', () => {
   });
 
   it('should update view when auth state changes', () => {
-    authFacade.hasAnyRole.and.returnValue(false);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(false);
     fixture.detectChanges();
 
     let element = fixture.nativeElement.querySelector('#admin-only');
     expect(element).toBeNull();
 
     // Cambiar estado
-    authFacade.hasAnyRole.and.returnValue(true);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(true);
     authStateSubject.next({ isAuthenticated: true, username: 'admin', roles: ['ADMIN'] });
     fixture.detectChanges();
 

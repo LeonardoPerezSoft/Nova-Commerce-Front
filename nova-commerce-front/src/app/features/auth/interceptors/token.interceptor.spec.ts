@@ -4,30 +4,35 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { tokenInterceptor } from './token.interceptor';
 import { TokenService } from '../services/token.service';
 import { AuthFacade } from '../services/auth.facade';
+import { vi, describe, it, beforeEach, afterEach, expect } from 'vitest';
 
 describe('tokenInterceptor', () => {
   let httpMock: HttpTestingController;
   let httpClient: HttpClient;
-  let tokenService: jasmine.SpyObj<TokenService>;
-  let authFacade: jasmine.SpyObj<AuthFacade>;
+  let tokenService: TokenService;
+  let authFacade: AuthFacade;
 
   beforeEach(() => {
-    const tokenServiceSpy = jasmine.createSpyObj('TokenService', ['getAccessToken']);
-    const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['logout']);
+    const tokenServiceMock = {
+      getAccessToken: vi.fn(),
+    };
+    const authFacadeMock = {
+      logout: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([tokenInterceptor])),
         provideHttpClientTesting(),
-        { provide: TokenService, useValue: tokenServiceSpy },
-        { provide: AuthFacade, useValue: authFacadeSpy },
+        { provide: TokenService, useValue: tokenServiceMock },
+        { provide: AuthFacade, useValue: authFacadeMock },
       ],
     });
 
     httpMock = TestBed.inject(HttpTestingController);
     httpClient = TestBed.inject(HttpClient);
-    tokenService = TestBed.inject(TokenService) as jasmine.SpyObj<TokenService>;
-    authFacade = TestBed.inject(AuthFacade) as jasmine.SpyObj<AuthFacade>;
+    tokenService = TestBed.inject(TokenService);
+    authFacade = TestBed.inject(AuthFacade);
   });
 
   afterEach(() => {
@@ -35,7 +40,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('should add Authorization header when token exists', () => {
-    tokenService.getAccessToken.and.returnValue('test-token');
+    vi.mocked(tokenService.getAccessToken).mockReturnValue('test-token');
 
     httpClient.get('/api/test').subscribe();
 
@@ -45,7 +50,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('should NOT add Authorization header for login endpoint', () => {
-    tokenService.getAccessToken.and.returnValue('test-token');
+    vi.mocked(tokenService.getAccessToken).mockReturnValue('test-token');
 
     httpClient.post('/api/auth/login', {}).subscribe();
 
@@ -55,7 +60,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('should NOT add Authorization header for refresh endpoint', () => {
-    tokenService.getAccessToken.and.returnValue('test-token');
+    vi.mocked(tokenService.getAccessToken).mockReturnValue('test-token');
 
     httpClient.post('/api/auth/refresh', {}).subscribe();
 
@@ -65,7 +70,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('should call logout on 401 error', () => {
-    tokenService.getAccessToken.and.returnValue('test-token');
+    vi.mocked(tokenService.getAccessToken).mockReturnValue('test-token');
 
     httpClient.get('/api/test').subscribe({
       error: () => {

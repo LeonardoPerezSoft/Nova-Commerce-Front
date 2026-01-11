@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TokenService } from './token.service';
+import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 
 describe('TokenService', () => {
   let service: TokenService;
@@ -73,5 +74,71 @@ describe('TokenService', () => {
     const roles = service.extractRolesFromToken(token);
     expect(roles).toContain('ROLE_ADMIN');
     expect(roles).toContain('ROLE_USER');
+  });
+
+  it('should check if token is expired', () => {
+    const expiredToken =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGhvcml0aWVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxfQ.test';
+
+    expect(service.isTokenExpired(expiredToken)).toBe(true);
+  });
+
+  it('should return true for hasValidToken when token is valid and present', () => {
+    const validToken =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGhvcml0aWVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxOTAwMDAwMDAwfQ.test';
+
+    service.setTokens(validToken, 'refresh', 'admin', ['ADMIN']);
+
+    expect(service.hasValidToken()).toBe(true);
+  });
+
+  it('should return false for hasValidToken when no token present', () => {
+    service.clearTokens();
+
+    expect(service.hasValidToken()).toBe(false);
+  });
+
+  it('should handle invalid token format in decodeToken', () => {
+    const invalidToken = 'invalid.token';
+
+    const payload = service.decodeToken(invalidToken);
+
+    expect(payload).toBeNull();
+  });
+
+  it('should handle invalid base64 in decodeToken', () => {
+    const invalidToken =
+      'eyJhbGciOiJIUzUxMiJ9.!!!invalid!!!.test';
+
+    const payload = service.decodeToken(invalidToken);
+
+    expect(payload).toBeNull();
+  });
+
+  it('should return empty array for extractRolesFromToken when token has no authorities', () => {
+    const tokenNoAuthorities =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxOTAwMDAwMDAwfQ.test';
+
+    const roles = service.extractRolesFromToken(tokenNoAuthorities);
+
+    expect(roles).toEqual([]);
+  });
+
+  it('should return null for extractUsernameFromToken when token invalid', () => {
+    const invalidToken = 'invalid.token';
+
+    const username = service.extractUsernameFromToken(invalidToken);
+
+    expect(username).toBeNull();
+  });
+
+  it('should filter empty roles when extracting from token', () => {
+    const tokenWithEmptyRoles =
+      'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGhvcml0aWVzIjoiUk9MRV9BRE1JTiwgLCBST0xFX1VTRVIiLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTkwMDAwMDAwMH0.test';
+
+    const roles = service.extractRolesFromToken(tokenWithEmptyRoles);
+
+    // Should not include empty strings
+    expect(roles.every((role) => role.trim() !== '')).toBe(true);
   });
 });

@@ -2,26 +2,31 @@ import { TestBed } from '@angular/core/testing';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { roleGuard } from './role.guard';
 import { AuthFacade } from '../services/auth.facade';
+import { vi, describe, it, beforeEach, expect } from 'vitest';
 
 describe('roleGuard', () => {
-  let authFacade: jasmine.SpyObj<AuthFacade>;
-  let router: jasmine.SpyObj<Router>;
+  let authFacade: AuthFacade;
+  let router: Router;
   let mockRoute: ActivatedRouteSnapshot;
   let mockState: RouterStateSnapshot;
 
   beforeEach(() => {
-    const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['hasAnyRole']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const authFacadeMock = {
+      hasAnyRole: vi.fn(),
+    };
+    const routerMock = {
+      navigate: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: AuthFacade, useValue: authFacadeSpy },
-        { provide: Router, useValue: routerSpy },
+        { provide: AuthFacade, useValue: authFacadeMock },
+        { provide: Router, useValue: routerMock },
       ],
     });
 
-    authFacade = TestBed.inject(AuthFacade) as jasmine.SpyObj<AuthFacade>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    authFacade = TestBed.inject(AuthFacade);
+    router = TestBed.inject(Router);
 
     mockRoute = { data: {} } as ActivatedRouteSnapshot;
     mockState = { url: '/admin' } as RouterStateSnapshot;
@@ -29,7 +34,7 @@ describe('roleGuard', () => {
 
   it('should allow access when user has required role', () => {
     mockRoute.data = { roles: ['ADMIN'] };
-    authFacade.hasAnyRole.and.returnValue(true);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(true);
 
     const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
 
@@ -39,7 +44,7 @@ describe('roleGuard', () => {
 
   it('should deny access when user does NOT have required role', () => {
     mockRoute.data = { roles: ['ADMIN'] };
-    authFacade.hasAnyRole.and.returnValue(false);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(false);
 
     const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
 
@@ -57,7 +62,7 @@ describe('roleGuard', () => {
 
   it('should check for ANY role when multiple roles are specified', () => {
     mockRoute.data = { roles: ['ADMIN', 'MANAGER'] };
-    authFacade.hasAnyRole.and.returnValue(true);
+    vi.mocked(authFacade.hasAnyRole).mockReturnValue(true);
 
     const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
 
