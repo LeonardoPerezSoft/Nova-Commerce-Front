@@ -1,0 +1,80 @@
+<div class="nc-login">
+  <div class="nc-login__container">
+    <!-- Logo y branding -->
+    <div class="nc-login__header">
+      <div class="nc-login__logo">
+        <span class="nc-login__logo-text">NOVA</span>
+      </div>
+      <h1 class="nc-login__title">Iniciar Sesión</h1>
+      <p class="nc-login__subtitle">Accede a tu cuenta de NovaCommerce</p>
+    </div>
+
+    <!-- Formulario de login -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="nc-login__form">
+      <!-- Campo Usuario -->
+      <div class="nc-login__field">
+        <label for="userIdentifier" class="nc-login__label">Usuario</label>
+        <input
+          type="text"
+          id="userIdentifier"
+          formControlName="userIdentifier"
+          class="nc-login__input"
+          [class.nc-login__input--error]="hasError('userIdentifier', 'required') || hasError('userIdentifier', 'minlength')"
+          placeholder="Ingresa tu usuario"
+          autocomplete="username"
+        />
+        <span class="nc-login__error" *ngIf="loginForm.get('userIdentifier')?.touched && loginForm.get('userIdentifier')?.invalid">
+          {{ getErrorMessage('userIdentifier') }}
+        </span>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="nc-login__field">
+        <label for="password" class="nc-login__label">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="nc-login__input"
+          [class.nc-login__input--error]="hasError('password', 'required') || hasError('password', 'minlength')"
+          placeholder="Ingresa tu contraseña"
+          autocomplete="current-password"
+        />
+        <span class="nc-login__error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          {{ getErrorMessage('password') }}
+        </span>
+      </div>
+
+      <!-- Mensaje de error global -->
+      <div class="nc-login__alert" *ngIf="errorMessage">
+        <svg class="nc-login__alert-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botón de submit -->
+      <button
+        type="submit"
+        class="nc-login__button"
+        [disabled]="isLoading"
+        [class.nc-login__button--loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+        <span *ngIf="isLoading" class="nc-login__spinner-wrapper">
+          <svg class="nc-login__spinner" viewBox="0 0 24 24">
+            <circle class="nc-login__spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+          </svg>
+          Cargando...
+        </span>
+      </button>
+    </form>
+
+    <!-- Footer info -->
+    <div class="nc-login__footer">
+      <p class="nc-login__footer-text">
+        ¿No tienes cuenta? Contacta al administrador
+      </p>
+    </div>
+  </div>
+</div>

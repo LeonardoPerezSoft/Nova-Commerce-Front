@@ -2,7 +2,8 @@
   <div class="nc-header__container">
     <!-- Logo -->
     <div class="nc-header__logo">
-      <a routerLink="/">
+      <a routerLink="/" class="nc-header__logo-link">
+        <img src="/logo.svg" alt="NovaCommerce" class="nc-header__logo-img" />
         <span class="nc-header__brand">NovaCommerce</span>
       </a>
     </div>
@@ -20,7 +21,7 @@
             Mis Órdenes
           </a>
         </li>
-        <li class="nc-header__nav-item">
+        <li class="nc-header__nav-item" *hasRole="'ADMIN'">
           <a routerLink="/admin" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
             Admin
           </a>
@@ -30,9 +31,20 @@
 
     <!-- Área de usuario -->
     <div class="nc-header__actions">
-      <button class="nc-header__login-btn" type="button">
-        Login
-      </button>
+      <!-- Mostrar cuando NO está autenticado -->
+      <a *ngIf="!authFacade.isAuthenticated()"
+         routerLink="/auth/login"
+         class="nc-header__login-btn">
+        Iniciar Sesión
+      </a>
+
+      <!-- Mostrar cuando SÍ está autenticado -->
+      <div *ngIf="authFacade.isAuthenticated()" class="nc-header__user">
+        <span class="nc-header__username">{{ authFacade.getUsername() }}</span>
+        <button class="nc-header__logout-btn" type="button" (click)="onLogout()">
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
   </div>
 </header>
