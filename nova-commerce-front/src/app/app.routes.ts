@@ -51,6 +51,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'cart',
+        canActivate: [authGuard],
+        loadChildren: () =>
+          import('./features/cart/cart.routes').then(
+            (m) => m.cartRoutes
+          ),
+      },
+      {
         path: 'admin',
         canActivate: [authGuard, roleGuard],
         data: { roles: ['ADMIN'] },
