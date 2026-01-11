@@ -21,7 +21,7 @@
             Mis Órdenes
           </a>
         </li>
-        <li class="nc-header__nav-item" *hasRole="'ADMIN'">
+        <li class="nc-header__nav-item" *ngIf="userFacade.isAdmin$|async">
           <a routerLink="/admin" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
             Admin
           </a>
@@ -32,15 +32,15 @@
     <!-- Área de usuario -->
     <div class="nc-header__actions">
       <!-- Mostrar cuando NO está autenticado -->
-      <a *ngIf="!authFacade.isAuthenticated()"
+      <a *ngIf="!(userFacade.isAuthenticated$|async)"
          routerLink="/auth/login"
          class="nc-header__login-btn">
         Iniciar Sesión
       </a>
 
       <!-- Mostrar cuando SÍ está autenticado -->
-      <div *ngIf="authFacade.isAuthenticated()" class="nc-header__user">
-        <span class="nc-header__username">{{ authFacade.getUsername() }}</span>
+      <div *ngIf="userFacade.isAuthenticated$|async" class="nc-header__user">
+        <span class="nc-header__username">{{ userFacade.email$ | async }}</span>
         <button class="nc-header__logout-btn" type="button" (click)="onLogout()">
           Cerrar Sesión
         </button>

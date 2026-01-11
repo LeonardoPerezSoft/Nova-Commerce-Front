@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthFacade } from '../../../features/auth/services/auth.facade';
-import { HasRoleDirective } from '../../../features/auth/directives/has-role.directive';
+import { UserFacade } from '../../../features/auth/facades/user.facade';
 
 /**
  * HeaderComponent
@@ -14,18 +14,25 @@ import { HasRoleDirective } from '../../../features/auth/directives/has-role.dir
  * - Mostrar logo de NovaCommerce
  * - Mostrar enlaces de navegación
  * - Mostrar estado de autenticación (login/logout)
- * - Mostrar username cuando está autenticado
+ * - Mostrar email del usuario cuando está autenticado
  * - Adaptar navegación según roles
+ *
+ * CONSUMER DE:
+ * • UserFacade - Para obtener información del usuario (email, roles)
+ * • AuthFacade - Para lógica de logout
  */
 @Component({
   selector: 'nc-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, HasRoleDirective],
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-  constructor(public authFacade: AuthFacade) {}
+  constructor(
+    public authFacade: AuthFacade,
+    public userFacade: UserFacade
+  ) {}
 
   /**
    * Maneja el click en el botón de logout
