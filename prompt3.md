@@ -1,4 +1,4 @@
-🧩 ETAPA 3 — Productos (Core del Negocio)
+git 🧩 ETAPA 3 — Productos (Core del Negocio)
 🎯 Objetivo de la etapa
 
 Construir el flujo completo de productos con una arquitectura limpia, reutilizable y escalable:

@@ -20,7 +20,7 @@
 
 import { Routes } from '@angular/router';
 
-export const PRODUCTS_ROUTES: Routes = [
+export const productsRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>

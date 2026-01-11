@@ -31,6 +31,12 @@
 
     <!-- Área de usuario -->
     <div class="nc-header__actions">
+      <!-- Carrito (solo si autenticado) -->
+      <app-cart-icon
+        *ngIf="userFacade.isAuthenticated$|async"
+        [itemCount]="(cartItemCount$ | async) ?? 0"
+      ></app-cart-icon>
+
       <!-- Mostrar cuando NO está autenticado -->
       <a *ngIf="!(userFacade.isAuthenticated$|async)"
          routerLink="/auth/login"
