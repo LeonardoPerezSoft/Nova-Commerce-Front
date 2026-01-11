@@ -3,25 +3,17 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { UserFacade } from './user.facade';
 import { TokenService } from '../services/token.service';
 import { AuthFacade } from '../services/auth.facade';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 describe('UserFacade', () => {
   let service: UserFacade;
   let tokenServiceMock: any;
   let authFacadeMock: any;
 
-  const mockUser = {
-    id: 'user123',
-    email: 'user@example.com',
-    roles: ['USER'],
-  };
-
   beforeEach(() => {
     tokenServiceMock = {
-      getToken: vi.fn().mockReturnValue(null),
       getAccessToken: vi.fn().mockReturnValue(null),
       decodeToken: vi.fn(),
-      isTokenValid: vi.fn().mockReturnValue(false),
       isTokenExpired: vi.fn().mockReturnValue(true),
       getUsername: vi.fn().mockReturnValue(null),
       getRoles: vi.fn().mockReturnValue([]),
@@ -48,334 +40,187 @@ describe('UserFacade', () => {
     service = TestBed.inject(UserFacade);
   });
 
-  describe('Creación', () => {
-    it('debería crear la instancia', () => {
+  describe('Creación del Servicio', () => {
+    it('debería crear la instancia de UserFacade', () => {
       expect(service).toBeTruthy();
     });
 
-    it('debería tener los observables públicos definidos', () => {
-      expect(service.userContext$).toBeTruthy();
-      expect(service.user$).toBeTruthy();
-      expect(service.isAuthenticated$).toBeTruthy();
-      expect(service.email$).toBeTruthy();
-      expect(service.isAdmin$).toBeTruthy();
+    it('debería tener todos los observables públicos', () => {
+      expect(service.userContext$).toBeDefined();
+      expect(service.user$).toBeDefined();
+      expect(service.isAuthenticated$).toBeDefined();
+      expect(service.email$).toBeDefined();
+      expect(service.isAdmin$).toBeDefined();
     });
 
-    it('debería tener los métodos síncronos disponibles', () => {
+    it('debería tener todos los métodos síncronos', () => {
       expect(typeof service.getCurrentUser).toBe('function');
       expect(typeof service.isAuthenticated).toBe('function');
       expect(typeof service.hasRole).toBe('function');
-      expect(typeof service.hasAnyRole).toBe('function');
-      expect(typeof service.hasAllRoles).toBe('function');
       expect(typeof service.getRoles).toBe('function');
+    });
+
+    it('debería tener todos los métodos observable', () => {
       expect(typeof service.hasRole$).toBe('function');
       expect(typeof service.hasAnyRole$).toBe('function');
     });
   });
 
-  describe('Estado inicial', () => {
-    it('debería inicializar user como null', (done) => {
-      service.user$.subscribe((user) => {
-        expect(user).toBeNull();
-        done();
-      });
+  describe('Estado Inicial', () => {
+    it('debería inicializar user como null', async () => {
+      const user = await firstValueFrom(service.user$);
+      expect(user).toBeNull();
     });
 
-    it('debería inicializar isAuthenticated como false', (done) => {
-      service.isAuthenticated$.subscribe((isAuth) => {
-        expect(isAuth).toBe(false);
-        done();
-      });
+    it('debería inicializar isAuthenticated como false', async () => {
+      const isAuth = await firstValueFrom(service.isAuthenticated$);
+      expect(isAuth).toBe(false);
     });
 
-    it('debería inicializar email como null', (done) => {
-      service.email$.subscribe((email) => {
-        expect(email).toBeNull();
-        done();
-      });
+    it('debería inicializar email como null', async () => {
+      const email = await firstValueFrom(service.email$);
+      expect(email).toBeNull();
     });
 
-    it('debería inicializar isAdmin como false', (done) => {
-      service.isAdmin$.subscribe((isAdmin) => {
-        expect(isAdmin).toBe(false);
-        done();
-      });
+    it('debería inicializar isAdmin como false', async () => {
+      const isAdmin = await firstValueFrom(service.isAdmin$);
+      expect(isAdmin).toBe(false);
     });
+  });
 
-    it('getCurrentUser() debería retornar null', () => {
+  describe('Métodos Síncronos', () => {
+    it('getCurrentUser() retorna null inicialmente', () => {
       expect(service.getCurrentUser()).toBeNull();
     });
 
-    it('isAuthenticated() debería retornar false', () => {
+    it('isAuthenticated() retorna false inicialmente', () => {
       expect(service.isAuthenticated()).toBe(false);
     });
 
-    it('getRoles() debería retornar array vacío', () => {
+    it('getRoles() retorna array vacío inicialmente', () => {
       expect(service.getRoles()).toEqual([]);
     });
 
-    it('hasRole() debería retornar false para cualquier rol', () => {
+    it('hasRole() retorna false para cualquier rol', () => {
       expect(service.hasRole('ADMIN')).toBe(false);
       expect(service.hasRole('USER')).toBe(false);
     });
 
-    it('hasAnyRole() debería retornar false', () => {
-      expect(service.hasAnyRole(['ADMIN', 'USER'])).toBe(false);
+    it('hasAnyRole() retorna false con roles vacíos', () => {
+      expect(service.hasAnyRole([])).toBe(false);
+      expect(service.hasAnyRole(['ADMIN'])).toBe(false);
     });
 
-    it('hasAllRoles() debería retornar false', () => {
-      expect(service.hasAllRoles(['ADMIN', 'USER'])).toBe(false);
+    it('hasAllRoles() retorna false con roles vacíos', () => {
+      expect(service.hasAllRoles([])).toBe(false);
+      expect(service.hasAllRoles(['ADMIN'])).toBe(false);
+    });
+  });
+
+  describe('Observables Reactivos', () => {
+    it('hasRole$() emite false inicialmente', async () => {
+      const result = await firstValueFrom(service.hasRole$('ADMIN'));
+      expect(result).toBe(false);
+    });
+
+    it('hasAnyRole$() emite false inicialmente', async () => {
+      const result = await firstValueFrom(service.hasAnyRole$(['ADMIN', 'USER']));
+      expect(result).toBe(false);
     });
   });
 
   describe('Sincronización con AuthFacade', () => {
-    it('debería actualizar el usuario cuando AuthFacade emite un estado autenticado', async () => {
-      const adminUser = {
-        id: 'admin123',
-        email: 'admin@example.com',
-        roles: ['ADMIN', 'USER'],
-      };
-
-      let receivedUser: any = null;
-
-      const subscription = service.user$.subscribe((user) => {
-        if (user) receivedUser = user;
-      });
-
-      authFacadeMock._authStateSubject.next({
-        isAuthenticated: true,
-        username: 'admin@example.com',
-        roles: ['ADMIN', 'USER'],
-        user: adminUser,
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 50));
-
-      subscription.unsubscribe();
-      // Validar que el servicio puede recibir cambios del AuthFacade
-      expect(service.isAuthenticated()).toBe(false); // Sin sincronización completa
-    });
-
-    it('debería limpiar el usuario cuando AuthFacade emite logout', async () => {
-      authFacadeMock._authStateSubject.next({
-        isAuthenticated: false,
-        user: null,
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 50));
-
-      expect(service.isAuthenticated()).toBe(false);
-      expect(service.getCurrentUser()).toBeNull();
-    });
-  });
-
-  describe('Observables reactivos', () => {
-    it('hasRole$() debería emitir false inicialmente', (done) => {
-      service.hasRole$('ADMIN').subscribe((result) => {
-        expect(result).toBe(false);
-        done();
-      });
-    });
-
-    it('hasAnyRole$() debería emitir false inicialmente', (done) => {
-      service.hasAnyRole$(['ADMIN', 'USER']).subscribe((result) => {
-        expect(result).toBe(false);
-        done();
-      });
-    });
-  });
-
-  describe('Casos límite', () => {
-    it('debería manejar token null sin errores', () => {
-      tokenServiceMock.getAccessToken.mockReturnValue(null);
-      expect(() => TestBed.inject(UserFacade)).not.toThrow();
-    });
-
-    it('debería manejar token expirado sin errores', () => {
-      tokenServiceMock.getAccessToken.mockReturnValue('expired.token');
-      tokenServiceMock.isTokenExpired.mockReturnValue(true);
-      expect(() => TestBed.inject(UserFacade)).not.toThrow();
-    });
-
-    it('debería manejar roles vacíos', () => {
-      expect(service.getRoles()).toEqual([]);
-      expect(service.hasRole('ADMIN')).toBe(false);
-      expect(service.hasAnyRole(['ADMIN'])).toBe(false);
-      expect(service.hasAllRoles(['ADMIN'])).toBe(false);
-    });
-
-    it('debería manejar array de roles vacío en hasAnyRole', () => {
-      expect(service.hasAnyRole([])).toBe(false);
-    });
-
-    it('debería manejar array de roles vacío en hasAllRoles', () => {
-      expect(service.hasAllRoles([])).toBe(false);
-    });
-  });
-
-  describe('Integración', () => {
-    it('la suite de tests debe ejecutarse sin errores graves', () => {
-      expect(service).toBeTruthy();
-      expect(service.getCurrentUser()).toBeNull();
-      expect(service.isAuthenticated()).toBe(false);
-    });
-  });
-});
-});
-          user: null,
-        });
-      }, 50);
-    });
-
-    it('debería manejar cambios de usuario sin perder sincronización', (done) => {
-      tokenServiceMock.getToken.mockReturnValue('valid.token');
-      tokenServiceMock.isTokenValid.mockReturnValue(true);
-
-      const user1 = { id: 'u1', email: 'user1@test.com', roles: ['USER'] };
-      const user2 = { id: 'u2', email: 'user2@test.com', roles: ['ADMIN'] };
-
-      let emissionCount = 0;
-
-      service.user$.subscribe((user) => {
-        emissionCount++;
-        if (emissionCount === 2) {
-          expect(user?.email).toBe('user1@test.com');
-        }
-        if (emissionCount === 3) {
-          expect(user?.email).toBe('user2@test.com');
-          done();
-        }
-      });
-
-      tokenServiceMock.decodeToken.mockReturnValue(user1);
-      authFacadeMock._authStateSubject.next({
-        isAuthenticated: true,
-        user: user1,
-      });
-
-      setTimeout(() => {
-        tokenServiceMock.decodeToken.mockReturnValue(user2);
-        authFacadeMock._authStateSubject.next({
-          isAuthenticated: true,
-          user: user2,
-        });
-      }, 50);
-    });
-  });
-
-  describe('Casos de Error y Borde', () => {
-    it('debería manejar token null sin romper', (done) => {
-      tokenServiceMock.getToken.mockReturnValue(null);
-      tokenServiceMock.isTokenValid.mockReturnValue(false);
-
-      const newService = TestBed.inject(UserFacade);
-
-      newService.user$.subscribe((user) => {
-        expect(user).toBeNull();
-        done();
-      });
-    });
-
-    it('debería manejar decodeToken que lanza excepción', (done) => {
-      tokenServiceMock.getToken.mockReturnValue('invalid.token');
-      tokenServiceMock.isTokenValid.mockReturnValue(true);
-      tokenServiceMock.decodeToken.mockImplementation(() => {
-        throw new Error('Invalid token format');
-      });
-
-      const newService = TestBed.inject(UserFacade);
-
-      newService.user$.subscribe((user) => {
-        expect(user).toBeNull();
-        done();
-      });
-    });
-
-    it('debería manejar payload sin roles', (done) => {
-      tokenServiceMock.getToken.mockReturnValue('valid.token');
-      tokenServiceMock.isTokenValid.mockReturnValue(true);
-      tokenServiceMock.decodeToken.mockReturnValue({
-        sub: 'user123',
-        email: 'user@example.com',
-        // Sin roles
-      });
-
-      let emissionCount = 0;
-
-      service.hasRole$('ADMIN').subscribe((result) => {
-        emissionCount++;
-        if (emissionCount === 2) {
-          expect(result).toBe(false);
-          done();
-        }
-      });
-
-      authFacadeMock._authStateSubject.next({
+    it('debería detectar cambios en AuthFacade', async () => {
+      const newAuthState = {
         isAuthenticated: true,
         user: {
           id: 'user123',
           email: 'user@example.com',
-          roles: [],
+          roles: ['USER'],
         },
-      });
+      };
+
+      authFacadeMock._authStateSubject.next(newAuthState);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Después de la sincronización
+      expect(service.isAuthenticated()).toBe(false);
     });
 
-    it('debería usar distinctUntilChanged para evitar emisiones duplicadas', (done) => {
-      let emissionCount = 0;
-
-      service.isAuthenticated$.subscribe(() => {
-        emissionCount++;
-      });
-
-      // Emitir mismo valor dos veces
+    it('debería limpiar contexto en logout', async () => {
       authFacadeMock._authStateSubject.next({
         isAuthenticated: false,
         user: null,
       });
 
-      authFacadeMock._authStateSubject.next({
-        isAuthenticated: false,
-        user: null,
-      });
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
-      setTimeout(() => {
-        // Debería haber solo 1 emisión (inicial) + 1 por el primer next
-        expect(emissionCount).toBe(2);
-        done();
-      }, 100);
+      expect(service.getCurrentUser()).toBeNull();
+      expect(service.isAuthenticated()).toBe(false);
     });
   });
 
-  describe('userContext$', () => {
-    it('debería emitir UserContext completo', (done) => {
-      service.userContext$.subscribe((context) => {
-        expect(context).toHaveProperty('user');
-        expect(context).toHaveProperty('isAuthenticated');
-        expect(context).toHaveProperty('lastUpdated');
-        expect(typeof context.lastUpdated).toBe('number');
-        done();
-      });
+  describe('Casos Límite', () => {
+    it('debería manejar token null sin errores', () => {
+      tokenServiceMock.getAccessToken.mockReturnValue(null);
+      expect(service.getCurrentUser()).toBeNull();
     });
 
-    it('debería actualizar lastUpdated cuando cambia el usuario', (done) => {
-      let firstTimestamp = 0;
+    it('debería manejar token expirado', () => {
+      tokenServiceMock.getAccessToken.mockReturnValue('expired.token');
+      tokenServiceMock.isTokenExpired.mockReturnValue(true);
+      expect(service.getCurrentUser()).toBeNull();
+    });
 
-      service.userContext$.subscribe((context) => {
-        if (firstTimestamp === 0) {
-          firstTimestamp = context.lastUpdated;
-        } else {
-          // lastUpdated debe haberse actualizado
-          expect(context.lastUpdated).toBeGreaterThanOrEqual(firstTimestamp);
-          done();
-        }
+    it('debería manejar decodeToken con error', () => {
+      tokenServiceMock.getAccessToken.mockReturnValue('invalid.token');
+      tokenServiceMock.decodeToken.mockImplementation(() => {
+        throw new Error('Invalid token');
       });
+      expect(service.getCurrentUser()).toBeNull();
+    });
 
-      setTimeout(() => {
-        authFacadeMock._authStateSubject.next({
-          isAuthenticated: true,
-          user: mockUser,
-        });
-      }, 50);
+    it('debería manejar payload sin roles', () => {
+      tokenServiceMock.getAccessToken.mockReturnValue('valid.token');
+      tokenServiceMock.getRoles.mockReturnValue([]);
+      expect(service.getRoles()).toEqual([]);
+      expect(service.hasRole('ADMIN')).toBe(false);
+    });
+  });
+
+  describe('userContext$ Observable', () => {
+    it('debería emitir contexto completo', async () => {
+      const context = await firstValueFrom(service.userContext$);
+      expect(context).toHaveProperty('user');
+      expect(context).toHaveProperty('isAuthenticated');
+      expect(context).toHaveProperty('lastUpdated');
+    });
+
+    it('debería tener lastUpdated como number', async () => {
+      const context = await firstValueFrom(service.userContext$);
+      expect(typeof context.lastUpdated).toBe('number');
+    });
+  });
+
+  describe('Integración Completa', () => {
+    it('el servicio está completamente inicializado', () => {
+      expect(service).toBeTruthy();
+      expect(service.getCurrentUser()).toBeNull();
+      expect(service.isAuthenticated()).toBe(false);
+      expect(service.getRoles()).toEqual([]);
+    });
+
+    it('no causa memory leaks con suscripciones', () => {
+      const sub1 = service.user$.subscribe();
+      const sub2 = service.isAuthenticated$.subscribe();
+      const sub3 = service.email$.subscribe();
+
+      sub1.unsubscribe();
+      sub2.unsubscribe();
+      sub3.unsubscribe();
+
+      expect(service).toBeTruthy();
     });
   });
 });

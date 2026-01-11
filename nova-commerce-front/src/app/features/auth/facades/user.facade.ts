@@ -198,9 +198,10 @@ export class UserFacade {
   /**
    * Verifica si el usuario tiene TODOS los roles especificados
    * @param roles - Array de roles a verificar
-   * @returns true si tiene todos los roles
+   * @returns true si tiene todos los roles (false si array vacío)
    */
   public hasAllRoles(roles: string[]): boolean {
+    if (roles.length === 0) return false;
     const userRoles = this.getCurrentUser()?.roles ?? [];
     return roles.every((role) => userRoles.includes(role));
   }
