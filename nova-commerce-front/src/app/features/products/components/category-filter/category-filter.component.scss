@@ -1,0 +1,77 @@
+/**
+ * CategoryFilterComponent Styles
+ *
+ * METODOLOGÍA: BEM
+ * DISEÑO: Filtro lateral tipo e-commerce
+ */
+
+.category-filter {
+  background-color: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 8px;
+  padding: 20px;
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #212121);
+    margin: 0 0 16px 0;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__button {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary, #757575);
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--color-background, #f5f5f5);
+      color: var(--color-text-primary, #212121);
+    }
+
+    &--active {
+      background-color: var(--color-primary, #1976d2);
+      color: white;
+      border-color: var(--color-primary, #1976d2);
+
+      &:hover {
+        background-color: var(--color-primary-dark, #1565c0);
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .category-filter {
+    &__title {
+      font-size: 1rem;
+    }
+
+    &__button {
+      padding: 8px 12px;
+      font-size: 0.8125rem;
+    }
+  }
+}

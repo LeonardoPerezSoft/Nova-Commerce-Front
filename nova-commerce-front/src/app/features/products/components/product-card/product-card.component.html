@@ -1,0 +1,29 @@
+<article class="product-card" [routerLink]="['/products', product().id]">
+  <div class="product-card__image-container">
+    <img
+      [src]="product().imageUrl"
+      [alt]="product().name"
+      class="product-card__image"
+      loading="lazy"
+    />
+    @if (product().stock === 0) {
+      <span class="product-card__badge product-card__badge--out-of-stock">Sin stock</span>
+    }
+  </div>
+
+  <div class="product-card__content">
+    <h3 class="product-card__title">{{ product().name }}</h3>
+
+    <p class="product-card__description">{{ product().description }}</p>
+
+    <div class="product-card__footer">
+      <span class="product-card__price">${{ product().price | number: '1.2-2' }}</span>
+
+      @if (product().stock > 0 && product().stock <= 5) {
+        <span class="product-card__stock product-card__stock--low">
+          ¡Solo quedan {{ product().stock }}!
+        </span>
+      }
+    </div>
+  </div>
+</article>

@@ -1,0 +1,31 @@
+<div class="category-filter">
+  <h3 class="category-filter__title">Categorías</h3>
+
+  <ul class="category-filter__list">
+    <!-- Opción "Todas las categorías" -->
+    <li class="category-filter__item">
+      <button
+        type="button"
+        class="category-filter__button"
+        [class.category-filter__button--active]="isActive(null)"
+        (click)="onCategoryClick(null)"
+      >
+        Todas las categorías
+      </button>
+    </li>
+
+    <!-- Lista de categorías -->
+    @for (category of categories(); track category.id) {
+      <li class="category-filter__item">
+        <button
+          type="button"
+          class="category-filter__button"
+          [class.category-filter__button--active]="isActive(category.id)"
+          (click)="onCategoryClick(category.id)"
+        >
+          {{ category.name }}
+        </button>
+      </li>
+    }
+  </ul>
+</div>

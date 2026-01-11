@@ -1,0 +1,104 @@
+<div class="product-detail-page">
+  <div class="product-detail-page__container">
+    <!-- Loading State -->
+    @if (loading$ | async) {
+      <div class="product-detail-page__loading">
+        <div class="product-detail-page__spinner"></div>
+        <p>Cargando producto...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @else if (error$ | async; as error) {
+      <div class="product-detail-page__error">
+        <div class="product-detail-page__error-icon">⚠️</div>
+        <h2 class="product-detail-page__error-title">Producto no encontrado</h2>
+        <p class="product-detail-page__error-message">{{ error }}</p>
+        <button
+          type="button"
+          class="product-detail-page__back-button"
+          (click)="goBack()"
+        >
+          Volver al catálogo
+        </button>
+      </div>
+    }
+
+    <!-- Success State: Detalle del producto -->
+    @else if (product$ | async; as product) {
+      <!-- Breadcrumbs -->
+      <nav class="product-detail-page__breadcrumbs">
+        <a routerLink="/products" class="product-detail-page__breadcrumb-link">
+          Productos
+        </a>
+        <span class="product-detail-page__breadcrumb-separator">/</span>
+        <span class="product-detail-page__breadcrumb-current">{{ product.name }}</span>
+      </nav>
+
+      <!-- Contenido principal -->
+      <div class="product-detail-page__content">
+        <!-- Imagen del producto -->
+        <div class="product-detail-page__image-section">
+          <img
+            [src]="product.imageUrl"
+            [alt]="product.name"
+            class="product-detail-page__image"
+          />
+        </div>
+
+        <!-- Información del producto -->
+        <div class="product-detail-page__info-section">
+          <h1 class="product-detail-page__title">{{ product.name }}</h1>
+
+          <div class="product-detail-page__price-container">
+            <span class="product-detail-page__price">${{ product.price | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="product-detail-page__stock-container">
+            @if (product.stock > 0) {
+              @if (product.stock <= 5) {
+                <span class="product-detail-page__stock product-detail-page__stock--low">
+                  ⚠️ Solo quedan {{ product.stock }} unidades
+                </span>
+              } @else {
+                <span class="product-detail-page__stock product-detail-page__stock--available">
+                  ✓ En stock ({{ product.stock }} disponibles)
+                </span>
+              }
+            } @else {
+              <span class="product-detail-page__stock product-detail-page__stock--out">
+                ✗ Sin stock
+              </span>
+            }
+          </div>
+
+          <div class="product-detail-page__description">
+            <h2 class="product-detail-page__section-title">Descripción</h2>
+            <p class="product-detail-page__description-text">{{ product.description }}</p>
+          </div>
+
+          <!-- Información adicional -->
+          <div class="product-detail-page__metadata">
+            <div class="product-detail-page__metadata-item">
+              <span class="product-detail-page__metadata-label">ID:</span>
+              <span class="product-detail-page__metadata-value">{{ product.id }}</span>
+            </div>
+            <div class="product-detail-page__metadata-item">
+              <span class="product-detail-page__metadata-label">Categoría:</span>
+              <span class="product-detail-page__metadata-value">{{ product.categoryId }}</span>
+            </div>
+          </div>
+
+          <!-- Botón de regreso -->
+          <button
+            type="button"
+            class="product-detail-page__back-button"
+            (click)="goBack()"
+          >
+            ← Volver al catálogo
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
