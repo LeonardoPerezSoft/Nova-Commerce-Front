@@ -1,0 +1,38 @@
+<header class="nc-header">
+  <div class="nc-header__container">
+    <!-- Logo -->
+    <div class="nc-header__logo">
+      <a routerLink="/">
+        <span class="nc-header__brand">NovaCommerce</span>
+      </a>
+    </div>
+
+    <!-- Navegación principal -->
+    <nav class="nc-header__nav">
+      <ul class="nc-header__nav-list">
+        <li class="nc-header__nav-item">
+          <a routerLink="/products" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
+            Productos
+          </a>
+        </li>
+        <li class="nc-header__nav-item">
+          <a routerLink="/orders" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
+            Mis Órdenes
+          </a>
+        </li>
+        <li class="nc-header__nav-item">
+          <a routerLink="/admin" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
+            Admin
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Área de usuario -->
+    <div class="nc-header__actions">
+      <button class="nc-header__login-btn" type="button">
+        Login
+      </button>
+    </div>
+  </div>
+</header>
