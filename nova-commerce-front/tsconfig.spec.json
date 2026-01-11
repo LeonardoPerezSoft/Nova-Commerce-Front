@@ -5,11 +5,17 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
-      "vitest/globals"
-    ]
+      "vitest/globals",
+      "node"
+    ],
+    "lib": ["ES2022", "dom"]
   },
   "include": [
     "src/**/*.d.ts",
-    "src/**/*.spec.ts"
+    "src/**/*.spec.ts",
+    "src/test-setup.ts"
+  ],
+  "files": [
+    "src/test-setup.ts"
   ]
 }
