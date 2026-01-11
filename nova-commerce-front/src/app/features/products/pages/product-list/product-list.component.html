@@ -1,0 +1,70 @@
+<div class="product-list-page">
+  <div class="product-list-page__container">
+    <!-- Header -->
+    <header class="product-list-page__header">
+      <h1 class="product-list-page__title">Productos</h1>
+      <p class="product-list-page__subtitle">
+        Descubre nuestra selección de productos
+      </p>
+    </header>
+
+    <div class="product-list-page__content">
+      <!-- Filtros laterales (desktop) / top (mobile) -->
+      <aside class="product-list-page__filters">
+        @if (categories$ | async; as categories) {
+          <app-category-filter
+            [categories]="categories"
+            [selectedCategoryId]="selectedCategoryId"
+            (categorySelected)="onCategoryChange($event)"
+          />
+        }
+      </aside>
+
+      <!-- Grid de productos -->
+      <main class="product-list-page__main">
+        <!-- Loading State -->
+        @if (loading$ | async) {
+          <div class="product-list-page__grid">
+            <app-product-skeleton [count]="8" />
+          </div>
+        }
+
+        <!-- Error State -->
+        @else if (error$ | async; as error) {
+          <div class="product-list-page__empty">
+            <div class="product-list-page__empty-icon">⚠️</div>
+            <h2 class="product-list-page__empty-title">Error al cargar productos</h2>
+            <p class="product-list-page__empty-message">{{ error }}</p>
+            <button
+              type="button"
+              class="product-list-page__retry-button"
+              (click)="retry()"
+            >
+              Reintentar
+            </button>
+          </div>
+        }
+
+        <!-- Empty State -->
+        @else if ((products$ | async)?.length === 0) {
+          <div class="product-list-page__empty">
+            <div class="product-list-page__empty-icon">📦</div>
+            <h2 class="product-list-page__empty-title">No hay productos disponibles</h2>
+            <p class="product-list-page__empty-message">
+              Intenta cambiar los filtros o vuelve más tarde.
+            </p>
+          </div>
+        }
+
+        <!-- Success State: Grid de productos -->
+        @else {
+          <div class="product-list-page__grid">
+            @for (product of products$ | async; track product.id) {
+              <app-product-card [product]="product" />
+            }
+          </div>
+        }
+      </main>
+    </div>
+  </div>
+</div>

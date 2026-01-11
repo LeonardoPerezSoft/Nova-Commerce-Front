@@ -1,0 +1,101 @@
+/**
+ * ProductListComponent — Listado de productos con filtros
+ *
+ * RESPONSABILIDADES:
+ * • Mostrar grid de productos paginado
+ * • Permitir filtrado por categoría
+ * • Gestionar loading y empty states
+ * • Responsive design (4 cols desktop, 2 tablet, 1 mobile)
+ *
+ * ARQUITECTURA:
+ * • Standalone component
+ * • Consume ProductFacade únicamente
+ * • Observable-first con async pipe
+ * • Sin lógica de negocio (solo presentación)
+ *
+ * FLUJO:
+ * 1. ngOnInit → facade.loadProducts() + facade.loadCategories()
+ * 2. Template suscribe a products$, categories$, loading$
+ * 3. Usuario filtra → onCategoryChange() → facade.loadProducts(filters)
+ * 4. Grid se actualiza automáticamente
+ */
+
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ProductFacade } from '../../services/product.facade';
+import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ProductSkeletonComponent } from '../../components/product-skeleton/product-skeleton.component';
+import { CategoryFilterComponent } from '../../components/category-filter/category-filter.component';
+
+@Component({
+  selector: 'app-product-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ProductCardComponent,
+    ProductSkeletonComponent,
+    CategoryFilterComponent,
+  ],
+  templateUrl: './product-list.component.html',
+  styleUrl: './product-list.component.scss',
+})
+export class ProductListComponent implements OnInit {
+  /**
+   * Facade de productos (inyectado con inject())
+   */
+  private readonly productFacade = inject(ProductFacade);
+
+  /**
+   * Observable de productos (del facade)
+   */
+  products$ = this.productFacade.products$;
+
+  /**
+   * Observable de categorías (del facade)
+   */
+  categories$ = this.productFacade.categories$;
+
+  /**
+   * Observable de loading state (del facade)
+   */
+  loading$ = this.productFacade.loading$;
+
+  /**
+   * Observable de errores (del facade)
+   */
+  error$ = this.productFacade.error$;
+
+  /**
+   * Observable del total de productos (para paginación futura)
+   */
+  total$ = this.productFacade.total$;
+
+  /**
+   * Categoría seleccionada actualmente
+   */
+  selectedCategoryId: string | null = null;
+
+  ngOnInit(): void {
+    // Cargar productos y categorías al iniciar
+    this.productFacade.loadProducts();
+    this.productFacade.loadCategories();
+  }
+
+  /**
+   * Maneja el cambio de categoría
+   * @param categoryId - ID de la categoría seleccionada (null = todas)
+   */
+  onCategoryChange(categoryId: string | null): void {
+    this.selectedCategoryId = categoryId;
+
+    const filters = categoryId ? { categoryId } : {};
+    this.productFacade.loadProducts(filters);
+  }
+
+  /**
+   * Recarga los productos (reintentar después de error)
+   */
+  retry(): void {
+    this.productFacade.loadProducts();
+  }
+}
