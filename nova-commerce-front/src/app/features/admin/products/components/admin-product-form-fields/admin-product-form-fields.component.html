@@ -1,0 +1,58 @@
+<div class="form-grid">
+  <label class="form-field">
+    <span class="form-label">Nombre *</span>
+    <input [(ngModel)]="model.name" (ngModelChange)="emitChange()" class="form-input" placeholder="Nombre del producto" />
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Descripción</span>
+    <textarea [(ngModel)]="model.description" (ngModelChange)="emitChange()" class="form-input" rows="3" placeholder="Descripción del producto"></textarea>
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Precio *</span>
+    <input type="number" step="0.01" [(ngModel)]="model.price" (ngModelChange)="emitChange()" class="form-input" placeholder="0.00" />
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Stock *</span>
+    <input type="number" [(ngModel)]="model.stockQuantity" (ngModelChange)="emitChange()" class="form-input" placeholder="0" />
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Categoría</span>
+    <div class="category-select-container">
+      <select
+        [(ngModel)]="model.categoryId"
+        (ngModelChange)="emitChange()"
+        class="form-input"
+        [disabled]="loadingCategories"
+      >
+        <option [value]="undefined">
+          {{ loadingCategories ? '⏳ Cargando categorías...' : 'Seleccionar categoría' }}
+        </option>
+        <option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+      <span *ngIf="loadingCategories" class="category-loader">⏳</span>
+    </div>
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Tipo de Producto *</span>
+    <select [(ngModel)]="model.productType" (ngModelChange)="emitChange()" class="form-input">
+      <option value="PHYSICAL">Físico</option>
+      <option value="DIGITAL">Digital</option>
+    </select>
+  </label>
+
+  <label class="form-field">
+    <span class="form-label">Estado *</span>
+    <select [(ngModel)]="model.status" (ngModelChange)="emitChange()" class="form-input">
+      <option value="ACTIVE">Activo</option>
+      <option value="INACTIVE">Inactivo</option>
+    </select>
+  </label>
+</div>
+

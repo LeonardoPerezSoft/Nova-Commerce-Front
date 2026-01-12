@@ -1,0 +1,25 @@
+<section class="admin-layout" *hasRole="'ADMIN'">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__header">
+      <h1 class="admin-sidebar__title">
+        <span class="admin-sidebar__icon">⚙️</span>
+        Admin Panel
+      </h1>
+    </div>
+
+    <nav class="admin-sidebar__nav">
+      <a routerLink="/admin/products" routerLinkActive="active" class="admin-sidebar__link">
+        <span class="nav-icon">📦</span>
+        <span>Productos</span>
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active" class="admin-sidebar__link">
+        <span class="nav-icon">🛒</span>
+        <span>Órdenes</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</section>

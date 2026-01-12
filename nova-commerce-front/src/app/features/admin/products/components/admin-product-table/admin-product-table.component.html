@@ -1,0 +1,47 @@
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Stock</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of products">
+      <td>
+        <div class="product-image">
+          <span class="no-image">📷</span>
+          <span class="no-image-text">No image</span>
+        </div>
+      </td>
+      <td>{{ p.name }}</td>
+      <td><strong>\${{ p.price | number:'1.2-2' }}</strong></td>
+      <td>{{ p.stockQuantity }}</td>
+      <td>
+        <span class="type-badge" [class.type-physical]="p.productType === 'PHYSICAL'"
+              [class.type-digital]="p.productType === 'DIGITAL'">
+          {{ p.productType }}
+        </span>
+      </td>
+      <td>
+        <span [class.badge-active]="p.status === 'ACTIVE'"
+              [class.badge-inactive]="p.status === 'INACTIVE'">
+          {{ p.status }}
+        </span>
+      </td>
+      <td class="actions-cell">
+        <a [routerLink]="['/admin/products', p.id]" class="btn-action btn-edit" title="Editar">
+          ✏️
+        </a>
+        <button (click)="deleteProduct(p.id, p.name)" class="btn-action btn-delete" title="Eliminar">
+          🗑️
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+

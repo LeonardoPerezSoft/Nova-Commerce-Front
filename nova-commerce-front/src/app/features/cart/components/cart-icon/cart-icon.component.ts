@@ -43,44 +43,48 @@ import { RouterLink } from '@angular/router';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #2c3e50;
+      color: #ffffff;
       cursor: pointer;
       padding: 8px;
-      border-radius: 4px;
-      transition: all 0.3s;
+      border-radius: 8px;
+      transition: all 0.3s ease;
       text-decoration: none;
     }
 
     .cart-icon:hover {
-      background: #ecf0f1;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
     }
 
     .cart-icon__svg {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
+      stroke-width: 1.5;
     }
 
     .cart-icon__badge {
       position: absolute;
-      top: 0;
-      right: 0;
-      background: #e74c3c;
+      top: -4px;
+      right: -4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 12px;
       font-weight: 700;
       line-height: 1;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      border: 2px solid #ffffff;
     }
 
     .cart-icon__badge--large {
       font-size: 10px;
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
     }
 
     @media (max-width: 768px) {
@@ -89,8 +93,8 @@ import { RouterLink } from '@angular/router';
       }
 
       .cart-icon__svg {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
       }
     }
   `,

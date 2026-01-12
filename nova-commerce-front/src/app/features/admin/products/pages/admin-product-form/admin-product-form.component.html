@@ -1,0 +1,22 @@
+<div class="admin-page">
+  <div class="admin-page__header">
+    <h2 class="admin-page__title">{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+  </div>
+
+  <div class="admin-page__content">
+    <div class="card">
+      <div class="form-container">
+        <app-admin-product-form-fields [model]="model" (modelChange)="onModelChange($event)"></app-admin-product-form-fields>
+
+        <div class="form-actions">
+          <button (click)="save()" class="btn btn--primary btn--large">
+            💾 {{ isEdit ? 'Actualizar' : 'Crear' }} Producto
+          </button>
+          <a routerLink="/admin/products" class="btn btn--secondary btn--large">
+            ❌ Cancelar
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

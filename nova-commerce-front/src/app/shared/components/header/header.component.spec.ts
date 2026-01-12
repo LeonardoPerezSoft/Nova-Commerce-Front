@@ -20,10 +20,10 @@ describe('HeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display the brand name "NovaCommerce"', () => {
+  it('should display the brand name "Nova"', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const brandElement = compiled.querySelector('.nc-header__brand');
-    expect(brandElement?.textContent).toBe('NovaCommerce');
+    expect(brandElement?.textContent).toBe('Nova');
   });
 
   it('should render navigation links', () => {

@@ -16,7 +16,7 @@ import type { Discount } from '../../models/order.model';
   template: `
     <div
       class="discount-badge"
-      [ngClass]="'discount-badge--' + (discount?.type | lowercase)"
+      [ngClass]="'discount-badge--' + (discount.type | lowercase)"
       *ngIf="discount"
     >
       <span class="discount-badge__label">{{ getLabel(discount.type) }}</span>
