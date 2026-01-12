@@ -1,9 +1,65 @@
 import { Routes } from '@angular/router';
-import { AdminComponent } from './admin.component';
+import { authGuard } from '../auth/guards/auth.guard';
+import { roleGuard } from '../auth/guards/role.guard';
 
 export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    component: AdminComponent,
+    loadComponent: () =>
+      import('./admin-layout.component').then((m) => m.AdminLayoutComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] },
+    children: [
+      {
+        path: '',
+        redirectTo: 'products',
+        pathMatch: 'full',
+      },
+      {
+        path: 'products',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./products/pages/admin-product-list/admin-product-list.component').then(
+                (m) => m.AdminProductListComponent
+              ),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./products/pages/admin-product-form/admin-product-form.component').then(
+                (m) => m.AdminProductFormComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./products/pages/admin-product-form/admin-product-form.component').then(
+                (m) => m.AdminProductFormComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'orders',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./orders/pages/admin-order-list/admin-order-list.component').then(
+                (m) => m.AdminOrderListComponent
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./orders/pages/admin-order-detail/admin-order-detail.component').then(
+                (m) => m.AdminOrderDetailComponent
+              ),
+          },
+        ],
+      },
+    ],
   },
 ];

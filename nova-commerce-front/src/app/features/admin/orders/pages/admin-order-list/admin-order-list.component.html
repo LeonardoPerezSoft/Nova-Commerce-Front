@@ -1,0 +1,61 @@
+<div class="admin-page">
+  <div class="admin-page__header">
+    <h2 class="admin-page__title">Gestión de Órdenes</h2>
+    <div class="filter-group">
+      <label class="filter-label">
+        <span class="filter-label__icon">🔍</span>
+        Estado
+      </label>
+      <select [(ngModel)]="status" (ngModelChange)="applyFilter()" class="filter-select">
+        <option value="ALL">Todas</option>
+        <option value="CREATED">Creadas</option>
+        <option value="PAID">Pagadas</option>
+        <option value="SHIPPED">Enviadas</option>
+        <option value="COMPLETED">Completadas</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="(state$ | async) as state" class="admin-page__content">
+    <div *ngIf="state.loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Cargando órdenes...</p>
+    </div>
+
+    <div *ngIf="!state.loading && filteredOrders(state.orders).length === 0" class="empty-state">
+      <p class="empty-icon">📦</p>
+      <p class="empty-text">No hay órdenes {{ status === 'ALL' ? '' : 'en estado ' + status }}</p>
+    </div>
+
+    <div *ngIf="!state.loading && filteredOrders(state.orders).length > 0" class="card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente ID</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of filteredOrders(state.orders)">
+            <td><strong>#{{ o.id }}</strong></td>
+            <td>{{ o.customerId }}</td>
+            <td>
+              <span class="badge" [ngClass]="'badge--' + o.status.toLowerCase()">
+                {{ o.status }}
+              </span>
+            </td>
+            <td><strong>\${{ o.totalAfterDiscount | number:'1.2-2' }}</strong></td>
+            <td>
+              <a [routerLink]="['/admin/orders', o.id]" class="btn-view">
+                Ver detalle →
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

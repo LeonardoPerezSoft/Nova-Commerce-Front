@@ -3,8 +3,8 @@
     <!-- Logo -->
     <div class="nc-header__logo">
       <a routerLink="/" class="nc-header__logo-link">
-        <img src="/logo.svg" alt="NovaCommerce" class="nc-header__logo-img" />
-        <span class="nc-header__brand">NovaCommerce</span>
+        <img src="/logo.svg" alt="Nova" class="nc-header__logo-img" />
+        <span class="nc-header__brand">Nova</span>
       </a>
     </div>
 
@@ -47,8 +47,12 @@
       <!-- Mostrar cuando SÍ está autenticado -->
       <div *ngIf="userFacade.isAuthenticated$|async" class="nc-header__user">
         <span class="nc-header__username">{{ userFacade.email$ | async }}</span>
-        <button class="nc-header__logout-btn" type="button" (click)="onLogout()">
-          Cerrar Sesión
+        <button class="nc-header__logout-btn" type="button" (click)="onLogout()" title="Cerrar Sesión">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
         </button>
       </div>
     </div>

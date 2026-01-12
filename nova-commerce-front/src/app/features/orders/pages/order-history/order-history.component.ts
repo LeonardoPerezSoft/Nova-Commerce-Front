@@ -10,12 +10,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { OrderFacade } from '../../services/order.facade';
-import { OrderSummaryComponent } from '../../components/order-summary/order-summary.component';
 
 @Component({
   selector: 'app-order-history',
   standalone: true,
-  imports: [CommonModule, RouterModule, OrderSummaryComponent],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="order-history">
       <div class="order-history__header">
