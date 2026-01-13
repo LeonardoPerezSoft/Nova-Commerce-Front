@@ -91,21 +91,32 @@ export class OrderFacade {
   }
 
   /**
-   * Carga todas las órdenes del usuario autenticado usando customerId del JWT
+   * Carga todas las órdenes del usuario autenticado
+   * - Si es ADMIN: carga todas las órdenes del sistema (GET /api/orders)
+   * - Si es USER con customerId: carga sus órdenes personales (GET /api/orders/customer/{id})
+   * - Si es USER sin customerId: carga desde endpoint genérico (GET /api/orders)
    */
   loadUserOrders(): void {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
+    const token = this.tokenService.getAccessToken();
+    const roles = token ? this.tokenService.extractRolesFromToken(token) : [];
+    const isAdmin = roles.includes('ROLE_ADMIN');
     const customerId = this.tokenService.getCustomerId();
 
-    // Si existe customerId, usar el endpoint específico del cliente
-    // Si no, usar el endpoint genérico
     let orders$: Observable<Order[]>;
 
-    if (customerId) {
+    // Si es ADMIN, mostrar todas las órdenes del sistema
+    if (isAdmin) {
+      orders$ = this.orderService.getUserOrders();
+    }
+    // Si es USER con customerId, mostrar solo sus órdenes
+    else if (customerId) {
       orders$ = this.orderService.getOrdersByCustomerId(customerId.toString());
-    } else {
+    }
+    // Por defecto, usar el endpoint genérico
+    else {
       orders$ = this.orderService.getUserOrders();
     }
 
