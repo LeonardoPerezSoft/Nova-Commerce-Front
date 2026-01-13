@@ -68,6 +68,7 @@ export interface UserSession {
 export interface JwtPayload {
   sub: string; // username
   authorities: string; // comma-separated roles
+  customerId?: number; // customer ID from backend
   iat: number; // issued at
   exp: number; // expiration
 }

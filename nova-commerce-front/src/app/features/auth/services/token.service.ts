@@ -25,6 +25,7 @@ export class TokenService {
   private readonly REFRESH_TOKEN_KEY = 'nc_refresh_token';
   private readonly USERNAME_KEY = 'nc_username';
   private readonly ROLES_KEY = 'nc_roles';
+  private readonly CUSTOMER_ID_KEY = 'nc_customer_id';
 
   /**
    * Guarda los tokens y metadatos en localStorage
@@ -39,6 +40,11 @@ export class TokenService {
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     localStorage.setItem(this.USERNAME_KEY, username);
     localStorage.setItem(this.ROLES_KEY, JSON.stringify(roles));
+    // Extraer customerId del token si está disponible
+    const payload = this.decodeToken(accessToken);
+    if (payload?.customerId) {
+      localStorage.setItem(this.CUSTOMER_ID_KEY, payload.customerId.toString());
+    }
   }
 
   /**
@@ -142,5 +148,21 @@ export class TokenService {
   extractUsernameFromToken(token: string): string | null {
     const payload = this.decodeToken(token);
     return payload?.sub || null;
+  }
+
+  /**
+   * Obtiene el customer ID almacenado
+   */
+  getCustomerId(): number | null {
+    const customerId = localStorage.getItem(this.CUSTOMER_ID_KEY);
+    return customerId ? parseInt(customerId, 10) : null;
+  }
+
+  /**
+   * Extrae customer ID del token JWT
+   */
+  extractCustomerIdFromToken(token: string): number | null {
+    const payload = this.decodeToken(token);
+    return payload?.customerId || null;
   }
 }

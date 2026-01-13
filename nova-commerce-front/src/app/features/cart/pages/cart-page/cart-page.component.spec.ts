@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CartItem } from '../../models/cart.model';
 import { vi } from 'vitest';
+import { Router } from '@angular/router';
 
 describe('CartPageComponent', () => {
   let component: CartPageComponent;
@@ -122,19 +123,26 @@ describe('CartPageComponent', () => {
     });
 
     it('debe hacer checkout cuando se emite evento', () => {
+      const router = TestBed.inject(Router);
+      const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
       fixture.detectChanges();
       component.onCheckout();
       expect(cartFacadeMock.checkout).toHaveBeenCalled();
     });
 
     it('debe mostrar isCheckoutLoading durante checkout', async () => {
+      const router = TestBed.inject(Router);
+      const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
       fixture.detectChanges();
       expect(component.isCheckoutLoading).toBe(false);
       component.onCheckout();
       expect(component.isCheckoutLoading).toBe(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
       expect(component.isCheckoutLoading).toBe(false);
+      expect(navigateSpy).toHaveBeenCalledWith(['/orders/create']);
     });
   });
 

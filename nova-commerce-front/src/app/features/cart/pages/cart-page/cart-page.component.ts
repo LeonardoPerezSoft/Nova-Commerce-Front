@@ -7,7 +7,7 @@
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartFacade } from '../../services/cart.facade';
 import { CartItemComponent } from '../../components/cart-item/cart-item.component';
 import { CartSummaryComponent } from '../../components/cart-summary/cart-summary.component';
@@ -173,6 +173,7 @@ import { CartSummaryComponent } from '../../components/cart-summary/cart-summary
 })
 export class CartPageComponent implements OnInit {
   private cartFacade = inject(CartFacade);
+  private router = inject(Router);
 
   items$ = this.cartFacade.items$;
   totalItems$ = this.cartFacade.totalItems$;
@@ -197,10 +198,11 @@ export class CartPageComponent implements OnInit {
     this.isCheckoutLoading = true;
     try {
       this.cartFacade.checkout();
-      // After checkout, cart is cleared by facade
+      // Navegar a la página de confirmación de orden
       setTimeout(() => {
         this.isCheckoutLoading = false;
-      }, 500);
+        this.router.navigate(['/orders/create']);
+      }, 1000);
     } catch (error) {
       console.error('Error during checkout:', error);
       this.isCheckoutLoading = false;

@@ -1,0 +1,293 @@
+.confirmation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.confirmation__card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.confirmation__success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: scaleIn 0.6s ease-out;
+
+  svg {
+    width: 40px;
+    height: 40px;
+    stroke-width: 3;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.confirmation__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.confirmation__subtitle {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.confirmation__order-id {
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirmation__label {
+  color: #7f8c8d;
+  font-weight: 600;
+}
+
+.confirmation__value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.confirmation__status {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.confirmation__status-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+
+  &.status--created {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &.status--paid {
+    background: #e8f5e9;
+    color: #388e3c;
+  }
+
+  &.status--shipped {
+    background: #fff3e0;
+    color: #f57c00;
+  }
+
+  &.status--completed {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+}
+
+.confirmation__items {
+  margin-bottom: 24px;
+}
+
+.confirmation__section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.confirmation__items-list {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.confirmation__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.confirmation__item-info {
+  flex: 1;
+}
+
+.confirmation__item-name {
+  margin: 0 0 4px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.confirmation__item-details {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 13px;
+}
+
+.confirmation__item-subtotal {
+  margin: 0;
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.confirmation__summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.confirmation__summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #7f8c8d;
+  font-size: 14px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.confirmation__summary-row--total {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 12px;
+    margin-top: 12px;
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 16px;
+  }
+}
+
+.confirmation__discount {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.confirmation__dates {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.confirmation__date {
+  margin: 0;
+  color: #7f8c8d;
+}
+
+.confirmation__date-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.confirmation__actions {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.confirmation__btn {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-size: 14px;
+
+  &.confirmation__btn--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+  }
+
+  &.confirmation__btn--secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+
+    &:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .confirmation__card {
+    padding: 24px;
+  }
+
+  .confirmation__title {
+    font-size: 22px;
+  }
+
+  .confirmation__success-icon {
+    width: 60px;
+    height: 60px;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
