@@ -7,8 +7,10 @@
         class="product-card__image"
         loading="lazy"
       />
-      @if (product().stock === 0) {
-        <span class="product-card__badge product-card__badge--out-of-stock">Sin stock</span>
+      @if (product(); as p) {
+        @if (!p.stock || p.stock === 0) {
+          <span class="product-card__badge product-card__badge--out-of-stock">Sin stock</span>
+        }
       }
     </div>
 
@@ -20,10 +22,12 @@
       <div class="product-card__footer">
         <span class="product-card__price">\${{ product().price | number: '1.2-2' }}</span>
 
-        @if (product().stock > 0 && product().stock <= 5) {
-          <span class="product-card__stock product-card__stock--low">
-            ¡Solo quedan {{ product().stock }}!
-          </span>
+        @if (product(); as p) {
+          @if (p.stock && p.stock > 0 && p.stock <= 5) {
+            <span class="product-card__stock product-card__stock--low">
+              ¡Solo quedan {{ p.stock }}!
+            </span>
+          }
         }
       </div>
     </div>
@@ -32,7 +36,7 @@
   <div class="product-card__actions">
     <button
       class="product-card__btn-cart"
-      [disabled]="product().stock === 0 || isAdding"
+      [disabled]="!product().stock || product().stock === 0 || isAdding"
       (click)="onAddToCart()"
       type="button"
     >
