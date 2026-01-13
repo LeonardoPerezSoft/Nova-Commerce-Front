@@ -133,7 +133,7 @@ describe('CartPageComponent', () => {
       component.onCheckout();
       expect(component.isCheckoutLoading).toBe(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 1100));
       expect(component.isCheckoutLoading).toBe(false);
     });
   });

@@ -6,11 +6,14 @@
  */
 
 export interface OrderItem {
-  productId: string;
-  name: string;
+  id?: string;
+  productId: string | number;
+  productName?: string;
+  name?: string;
   unitPrice: number;
   quantity: number;
-  subtotal: number;
+  subtotal?: number;
+  productType?: string | null;
 }
 
 export interface Discount {
@@ -20,17 +23,21 @@ export interface Discount {
 }
 
 export interface Order {
-  id: string;
-  userId: string;
+  id: string | number;
+  customerId?: number;
+  userId?: string;
   items: OrderItem[];
   totalBeforeDiscount: number;
+  discountTotal?: number;
   totalAfterDiscount: number;
-  discounts: Discount[];
+  discounts?: Discount[];
   status: 'CREATED' | 'PAID' | 'SHIPPED' | 'COMPLETED';
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface CreateOrderRequest {
+  customerId?: number;
   items: OrderItem[];
 }
 

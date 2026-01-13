@@ -61,7 +61,12 @@ export class OrderFacade {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    const request: CreateOrderRequest = { items };
+    const customerId = this.tokenService.getCustomerId();
+
+    const request: CreateOrderRequest = {
+      customerId: customerId ?? undefined,
+      items,
+    };
 
     this.orderService
       .createOrder(request)
@@ -86,25 +91,23 @@ export class OrderFacade {
   }
 
   /**
-   * Carga todas las órdenes del usuario autenticado
+   * Carga todas las órdenes del usuario autenticado usando customerId del JWT
    */
   loadUserOrders(): void {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    const user = this.userFacade.getCurrentUser();
+    const customerId = this.tokenService.getCustomerId();
 
-    // Determinar id del cliente: preferir user.id, si no usar username desde token
-    const fallbackId = this.tokenService.getUsername();
-    const userId = user?.id ?? fallbackId;
+    // Si existe customerId, usar el endpoint específico del cliente
+    // Si no, usar el endpoint genérico
+    let orders$: Observable<Order[]>;
 
-    const isRoleUser = user?.roles?.includes('ROLE_USER') || this.tokenService.getRoles().includes('ROLE_USER');
-
-    console.log('OrderFacade: loading orders for userId=', userId, ' roles=', user?.roles ?? this.tokenService.getRoles());
-
-    const orders$ = userId && isRoleUser
-      ? this.orderService.getOrdersByCustomerId(userId)
-      : this.orderService.getUserOrders();
+    if (customerId) {
+      orders$ = this.orderService.getOrdersByCustomerId(customerId.toString());
+    } else {
+      orders$ = this.orderService.getUserOrders();
+    }
 
     orders$
       .pipe(

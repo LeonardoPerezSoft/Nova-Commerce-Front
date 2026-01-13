@@ -1,49 +1,61 @@
 /**
- * CreateOrderComponent
+ * CreateOrderComponent / Order Confirmation
  *
- * Página para crear una nueva orden
- * En una etapa futura se integrará con Carrito
- * Por ahora es un placeholder que muestra la estructura
+ * Página de confirmación de orden después del checkout
+ * Muestra los detalles de la orden creada de forma estética
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { OrderFacade } from '../../services/order.facade';
+import { OrderConfirmationComponent } from '../../components/order-confirmation/order-confirmation.component';
+import { Observable } from 'rxjs';
+import { Order } from '../../models/order.model';
 
 @Component({
   selector: 'app-create-order',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, OrderConfirmationComponent],
   template: `
     <div class="create-order">
-      <div class="create-order__header">
-        <h1 class="create-order__title">Crear Orden</h1>
-        <p class="create-order__subtitle">Desde tu carrito de compras</p>
-      </div>
+      <!-- Show confirmation if order was created -->
+      <ng-container *ngIf="(order$ | async) as order">
+        <app-order-confirmation [order]="order"></app-order-confirmation>
+      </ng-container>
 
-      <div class="create-order__placeholder">
-        <p class="create-order__icon">🛒</p>
-        <p class="create-order__text">
-          La funcionalidad de crear órdenes se integrará en ETAPA 5
-        </p>
-        <p class="create-order__detail">
-          Esta página funcionará junto con el carrito de compras
-        </p>
-        <a href="/products" class="create-order__link">
-          Volver a Productos
-        </a>
-      </div>
+      <!-- Show placeholder if no order -->
+      <ng-container *ngIf="!(order$ | async)">
+        <div class="create-order__header">
+          <h1 class="create-order__title">Crear Orden</h1>
+          <p class="create-order__subtitle">Desde tu carrito de compras</p>
+        </div>
+
+        <div class="create-order__placeholder">
+          <p class="create-order__icon">🛒</p>
+          <p class="create-order__text">
+            Tu orden aparecerá aquí después de completar el checkout
+          </p>
+          <p class="create-order__detail">
+            Navega a tu carrito y haz clic en "Confirmar Compra"
+          </p>
+          <a href="/cart" class="create-order__link">
+            Ir al Carrito
+          </a>
+        </div>
+      </ng-container>
     </div>
   `,
-  styles: `
+  styles: [`
     .create-order {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 32px 20px;
+      min-height: 100vh;
+      padding: 20px;
     }
 
     .create-order__header {
-      margin-bottom: 32px;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 32px 20px;
       text-align: center;
     }
 
@@ -57,27 +69,35 @@ import { RouterModule } from '@angular/router';
     .create-order__subtitle {
       font-size: 16px;
       color: #7f8c8d;
-      margin: 0;
+      margin: 0 0 32px;
     }
 
     .create-order__placeholder {
+      max-width: 400px;
+      margin: 60px auto;
+      padding: 40px 20px;
       text-align: center;
-      padding: 60px 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border: 2px dashed #bdc3c7;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
 
     .create-order__icon {
       font-size: 64px;
-      margin-bottom: 16px;
+      margin: 0 0 16px;
     }
 
     .create-order__text {
       font-size: 18px;
-      color: #2c3e50;
-      margin: 0 0 8px;
       font-weight: 600;
+      color: #2c3e50;
+      margin: 0 0 12px;
+    }
+
+    .create-order__detail {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin: 0 0 24px;
     }
 
     .create-order__detail {
@@ -88,18 +108,41 @@ import { RouterModule } from '@angular/router';
 
     .create-order__link {
       display: inline-block;
-      padding: 10px 20px;
-      background: #27ae60;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       text-decoration: none;
-      border-radius: 4px;
+      border-radius: 8px;
       font-weight: 600;
-      transition: background 0.3s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .create-order__link:hover {
-      background: #229954;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
     }
-  `,
+
+    @media (max-width: 768px) {
+      .create-order__header {
+        padding: 24px 16px;
+      }
+
+      .create-order__title {
+        font-size: 24px;
+      }
+
+      .create-order__placeholder {
+        margin: 40px 20px;
+      }
+    }
+  `],
 })
-export class CreateOrderComponent {}
+export class CreateOrderComponent implements OnInit {
+  order$!: Observable<Order | null>;
+
+  constructor(private orderFacade: OrderFacade) {}
+
+  ngOnInit(): void {
+    this.order$ = this.orderFacade.order$;
+  }
+}
