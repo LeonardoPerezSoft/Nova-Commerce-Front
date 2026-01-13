@@ -58,4 +58,18 @@ export class AuthService {
   validateToken(): Observable<TokenValidationResponse> {
     return this.http.get<TokenValidationResponse>(`${this.API_URL}/validate`);
   }
+
+  /**
+   * Registra un nuevo usuario en el sistema (endpoint público)
+   */
+  register(payload: {
+    username: string;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+  }) {
+    return this.http.post(`${this.API_URL}/public/register`, payload);
+  }
 }

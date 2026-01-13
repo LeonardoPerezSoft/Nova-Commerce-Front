@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthFacade } from '../../services/auth.facade';
@@ -16,15 +16,12 @@ describe('LoginComponent', () => {
     const authFacadeMock = {
       login: vi.fn(),
     };
-    const routerMock = {
-      navigate: vi.fn(),
-    };
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
       providers: [
+        provideRouter([]),
         { provide: AuthFacade, useValue: authFacadeMock },
-        { provide: Router, useValue: routerMock },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { queryParams: {} } },
@@ -36,6 +33,7 @@ describe('LoginComponent', () => {
     component = fixture.componentInstance;
     authFacade = TestBed.inject(AuthFacade);
     router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate');
     fixture.detectChanges();
   });
 

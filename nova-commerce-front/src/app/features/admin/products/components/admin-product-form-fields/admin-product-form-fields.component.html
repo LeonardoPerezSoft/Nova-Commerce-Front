@@ -54,5 +54,13 @@
       <option value="INACTIVE">Inactivo</option>
     </select>
   </label>
+
+  <label class="form-field">
+    <span class="form-label">Imagen</span>
+    <input type="file" accept="image/*" (change)="onFileSelected($event)" class="form-input" />
+    <div class="preview" *ngIf="previewSrc">
+      <img [src]="previewSrc" alt="Preview" />
+    </div>
+  </label>
 </div>
 

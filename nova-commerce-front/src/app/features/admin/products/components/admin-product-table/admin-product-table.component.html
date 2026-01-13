@@ -14,8 +14,11 @@
     <tr *ngFor="let p of products">
       <td>
         <div class="product-image">
-          <span class="no-image">📷</span>
-          <span class="no-image-text">No image</span>
+          <img *ngIf="p.imageUrl" [src]="p.imageUrl" (error)="onImageError($event)" alt="Imagen del producto" />
+          <ng-container *ngIf="!p.imageUrl">
+            <span class="no-image">📷</span>
+            <span class="no-image-text">No image</span>
+          </ng-container>
         </div>
       </td>
       <td>{{ p.name }}</td>

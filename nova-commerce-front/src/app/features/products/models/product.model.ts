@@ -3,15 +3,16 @@
  * Representa un producto disponible para la venta
  */
 export interface Product {
-  id: string;
+  id: string | number;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
-  categoryId: string;
-  stock: number;
-  createdAt: string;
-  updatedAt: string;
+  imageUrl?: string | null;
+  categoryId?: string;
+  stock?: number;
+  productType?: 'PHYSICAL' | 'DIGITAL';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**

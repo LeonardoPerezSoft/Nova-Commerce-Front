@@ -65,6 +65,29 @@ export class OrderService {
   }
 
   /**
+   * Obtiene las órdenes de un cliente por su id (endpoint público/administrativo)
+   * @param customerId - id del cliente
+   * @returns Observable con array de órdenes
+   */
+  getOrdersByCustomerId(customerId: string): Observable<Order[]> {
+    return this.http.get<any>(`${this.apiUrl}/customer/${customerId}`).pipe(
+      map((response) => {
+        if (Array.isArray(response)) {
+          return response as Order[];
+        }
+        if (response?.content && Array.isArray(response.content)) {
+          return response.content as Order[];
+        }
+        if (response?.orders && Array.isArray(response.orders)) {
+          return response.orders as Order[];
+        }
+        console.warn('Respuesta de órdenes por cliente inesperada:', response);
+        return [];
+      })
+    );
+  }
+
+  /**
    * Obtiene una orden por su ID
    * @param id - ID de la orden
    * @returns Observable con la orden

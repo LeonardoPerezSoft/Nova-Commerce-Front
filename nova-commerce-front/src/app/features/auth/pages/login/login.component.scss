@@ -181,6 +181,25 @@
     color: #6b7280;
     margin: 0;
   }
+
+  &__register-btn {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    background: white;
+    color: #6b46c1;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.2);
+    }
+  }
 }
 
 @keyframes spin {

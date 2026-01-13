@@ -6,7 +6,7 @@
   <div class="admin-page__content">
     <div class="card">
       <div class="form-container">
-        <app-admin-product-form-fields [model]="model" (modelChange)="onModelChange($event)"></app-admin-product-form-fields>
+        <app-admin-product-form-fields [model]="model" (modelChange)="onModelChange($event)" (imageFileChange)="onImageFileChange($event)"></app-admin-product-form-fields>
 
         <div class="form-actions">
           <button (click)="save()" class="btn btn--primary btn--large">

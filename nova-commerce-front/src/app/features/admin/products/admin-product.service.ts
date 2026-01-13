@@ -43,4 +43,13 @@ export class AdminProductService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.resource}/${id}`);
   }
+
+  /**
+   * Sube una imagen para un producto (form-data -> field 'image')
+   */
+  uploadImage(id: number, file: File): Observable<{ imageUrl: string; message?: string }> {
+    const fd = new FormData();
+    fd.append('imageFile', file);
+    return this.http.post<{ imageUrl: string; message?: string }>(`${this.resource}/${id}/images`, fd);
+  }
 }

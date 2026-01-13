@@ -60,28 +60,38 @@ export class CartFacade {
    */
   addItem(product: any): void {
     const currentCart = this.cartSubject.value;
-    const existingItem = currentCart.items.find(
-      (item) => item.productId === product.id
-    );
+
+    // Normalizar campos: aceptar tanto Product { id, name, price } como
+    // objeto con forma de CartItem { productId, name, price, quantity }
+    const id = product?.id ?? product?.productId ?? product?.product_id ?? null;
+    const name = product?.name ?? product?.title ?? product?.productName ?? '';
+    const price = product?.price ?? product?.unitPrice ?? 0;
+    const imageUrl = product?.imageUrl ?? product?.img ?? '';
+    const categoryId = product?.categoryId ?? product?.category_id ?? null;
+
+    if (!id) {
+      console.warn('addItem: producto sin identificador', product);
+      return;
+    }
+
+    const existingItem = currentCart.items.find((item) => item.productId === id);
 
     let updatedItems: CartItem[];
 
     if (existingItem) {
       // Incrementar cantidad
       updatedItems = currentCart.items.map((item) =>
-        item.productId === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.productId === id ? { ...item, quantity: item.quantity + 1 } : item
       );
     } else {
       // Agregar nuevo item
       const newItem: CartItem = {
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-        imageUrl: product.imageUrl,
-        categoryId: product.categoryId,
+        productId: id,
+        name,
+        price,
+        quantity: product?.quantity ?? 1,
+        imageUrl,
+        categoryId,
       };
       updatedItems = [...currentCart.items, newItem];
     }

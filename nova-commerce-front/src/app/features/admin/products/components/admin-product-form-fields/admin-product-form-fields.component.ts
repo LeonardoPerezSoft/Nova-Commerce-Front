@@ -23,6 +23,9 @@ export class AdminProductFormFieldsComponent implements OnInit {
     categoryId: undefined
   };
   @Output() modelChange = new EventEmitter<AdminProductInput>();
+  @Output() imageFileChange = new EventEmitter<File | null>();
+
+  previewSrc: string | null = null;
 
   private categoryService = inject(CategoryService);
   categories: Category[] = [];
@@ -43,5 +46,19 @@ export class AdminProductFormFieldsComponent implements OnInit {
 
   emitChange() {
     this.modelChange.emit(this.model);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      this.previewSrc = null;
+      this.imageFileChange.emit(null);
+      return;
+    }
+    const file = input.files[0];
+    this.imageFileChange.emit(file);
+    const reader = new FileReader();
+    reader.onload = () => (this.previewSrc = reader.result as string);
+    reader.readAsDataURL(file);
   }
 }
