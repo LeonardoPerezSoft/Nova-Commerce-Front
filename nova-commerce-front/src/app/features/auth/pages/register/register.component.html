@@ -1,0 +1,99 @@
+<div class="nc-login nc-register">
+  <div class="nc-login__container">
+    <div class="nc-login__header">
+      <div class="nc-login__logo">
+        <span class="nc-login__logo-text">NOVA</span>
+      </div>
+      <h1 class="nc-login__title">Crear Cuenta</h1>
+      <p class="nc-login__subtitle">Regístrate para acceder a NovaCommerce</p>
+    </div>
+
+    <form (ngSubmit)="submit()" class="nc-login__form">
+      <div class="nc-login__field">
+        <label class="nc-login__label">Usuario</label>
+        <input class="nc-login__input" [(ngModel)]="model.username" name="username" required placeholder="Usuario" />
+        <span class="nc-login__error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Email</label>
+        <input class="nc-login__input" [(ngModel)]="model.email" name="email" type="email" required placeholder="correo@ejemplo.com" />
+        <span class="nc-login__error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Nombre</label>
+        <input class="nc-login__input" [(ngModel)]="model.firstName" name="firstName" required placeholder="Nombre" />
+        <span class="nc-login__error" *ngIf="fieldErrors['firstName']">{{ fieldErrors['firstName'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Apellido</label>
+        <input class="nc-login__input" [(ngModel)]="model.lastName" name="lastName" required placeholder="Apellido" />
+        <span class="nc-login__error" *ngIf="fieldErrors['lastName']">{{ fieldErrors['lastName'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Teléfono</label>
+        <input class="nc-login__input" [(ngModel)]="model.phone" name="phone" placeholder="Opcional" />
+        <span class="nc-login__error" *ngIf="fieldErrors['phone']">{{ fieldErrors['phone'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Contraseña</label>
+        <div style="position:relative">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="nc-login__input"
+            [(ngModel)]="model.password"
+            name="password"
+            required
+            minlength="8"
+            placeholder="Mínimo 8 caracteres"
+            (ngModelChange)="checkPasswords()"
+          />
+          <button type="button" class="nc-login__toggle" (click)="toggleShowPassword()" aria-label="Mostrar contraseña">
+            {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </div>
+        <span class="nc-login__error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'][0] }}</span>
+      </div>
+
+      <div class="nc-login__field">
+        <label class="nc-login__label">Confirmar Contraseña</label>
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          class="nc-login__input"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          placeholder="Repite la contraseña"
+          (ngModelChange)="checkPasswords()"
+          (blur)="confirmTouched = true"
+        />
+        <span class="nc-login__error" *ngIf="fieldErrors['confirmPassword']">{{ fieldErrors['confirmPassword'][0] }}</span>
+      </div>
+
+      <div class="nc-login__alert" *ngIf="error">
+        {{ error }}
+        <ul *ngIf="fieldErrors && (fieldErrors | keys)?.length">
+          <li *ngFor="let key of (fieldErrors | keys)">{{ key }}: {{ fieldErrors[key][0] }}</li>
+        </ul>
+      </div>
+
+      <button type="submit" class="nc-login__button" [disabled]="loading || passwordsMismatch">
+        <span *ngIf="!loading">Crear cuenta</span>
+        <span *ngIf="loading" class="nc-login__spinner-wrapper">
+          <svg class="nc-login__spinner" viewBox="0 0 24 24">
+            <circle class="nc-login__spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+          </svg>
+          Enviando...
+        </span>
+      </button>
+
+      <div class="nc-login__footer">
+        <a routerLink="/auth/login" class="nc-login__register-btn">Volver a login</a>
+      </div>
+    </form>
+  </div>
+</div>

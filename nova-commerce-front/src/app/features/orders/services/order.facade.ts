@@ -22,6 +22,7 @@ import {
 } from 'rxjs/operators';
 import { OrderService } from './order.service';
 import { UserFacade } from '../../auth/facades/user.facade';
+import { TokenService } from '../../auth/services/token.service';
 import type {
   Order,
   CreateOrderRequest,
@@ -48,7 +49,8 @@ export class OrderFacade {
 
   constructor(
     private orderService: OrderService,
-    private userFacade: UserFacade
+    private userFacade: UserFacade,
+    private tokenService: TokenService
   ) {}
 
   /**
@@ -90,8 +92,21 @@ export class OrderFacade {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
 
-    this.orderService
-      .getUserOrders()
+    const user = this.userFacade.getCurrentUser();
+
+    // Determinar id del cliente: preferir user.id, si no usar username desde token
+    const fallbackId = this.tokenService.getUsername();
+    const userId = user?.id ?? fallbackId;
+
+    const isRoleUser = user?.roles?.includes('ROLE_USER') || this.tokenService.getRoles().includes('ROLE_USER');
+
+    console.log('OrderFacade: loading orders for userId=', userId, ' roles=', user?.roles ?? this.tokenService.getRoles());
+
+    const orders$ = userId && isRoleUser
+      ? this.orderService.getOrdersByCustomerId(userId)
+      : this.orderService.getUserOrders();
+
+    orders$
       .pipe(
         tap((orders) => {
           this.ordersSubject.next(orders);

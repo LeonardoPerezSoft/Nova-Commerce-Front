@@ -27,6 +27,7 @@ export class AdminProductFormComponent implements OnInit {
     categoryId: undefined
   };
   isEdit = false;
+  selectedFile: File | null = null;
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -55,14 +56,27 @@ export class AdminProductFormComponent implements OnInit {
     if (this.isEdit) {
       const idParam = this.route.snapshot.paramMap.get('id')!;
       const id = parseInt(idParam, 10);
-      this.facade.updateProduct(id, this.model);
+      // Si hay un archivo seleccionado, actualizar y subir la imagen en la fachada
+      this.facade.updateProductWithImage(id, this.model, this.selectedFile ?? undefined);
+      if (this.selectedFile) {
+        // Esperamos la subida en la fachada; navegación la hacemos tras una pequeña demora
+        // (la fachada ya actualiza el estado cuando termina). Navegamos tras 500ms para
+        // dar tiempo a la operación asíncrona. Si necesitas una navegación más exacta,
+        // podemos devolver observables desde la fachada.
+        setTimeout(() => this.router.navigate(['/admin/products']), 500);
+        return;
+      }
     } else {
-      this.facade.createProduct(this.model);
+      this.facade.createProductWithImage(this.model, this.selectedFile ?? undefined);
     }
     this.router.navigate(['/admin/products']);
   }
 
   onModelChange(updatedModel: AdminProductInput) {
     this.model = updatedModel;
+  }
+
+  onImageFileChange(file: File | null) {
+    this.selectedFile = file;
   }
 }

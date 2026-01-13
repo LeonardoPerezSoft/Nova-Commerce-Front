@@ -57,6 +57,62 @@ export class AdminProductFacade {
     });
   }
 
+  /**
+   * Crea un producto y opcionalmente sube una imagen asociada
+   */
+  createProductWithImage(input: AdminProductInput, file?: File) {
+    this.setState({ loading: true });
+    this.service.create(input).subscribe({
+      next: (p) => {
+        if (file) {
+          this.service.uploadImage(p.id, file).subscribe({
+            next: (res) => {
+              const updated = { ...p, imageUrl: res.imageUrl } as AdminProduct;
+              this.setState({ products: [updated, ...this._state$.value.products], selectedProduct: updated, loading: false });
+            },
+            error: () => this.setState({ products: [p, ...this._state$.value.products], selectedProduct: p, loading: false }),
+          });
+        } else {
+          this.setState({ products: [p, ...this._state$.value.products], selectedProduct: p, loading: false });
+        }
+      },
+      error: () => this.setState({ loading: false }),
+    });
+  }
+
+  uploadImage(productId: number, file: File) {
+    this.setState({ loading: true });
+    return this.service.uploadImage(productId, file);
+  }
+
+  /**
+   * Actualiza un producto y opcionalmente sube una imagen después de la actualización
+   */
+  updateProductWithImage(id: number, input: AdminProductInput, file?: File) {
+    this.setState({ loading: true });
+    this.service.update(id, input).subscribe({
+      next: (p) => {
+        if (file) {
+          this.service.uploadImage(p.id, file).subscribe({
+            next: (res) => {
+              const updated = { ...p, imageUrl: res.imageUrl } as AdminProduct;
+              const products = this._state$.value.products.map((it) => (it.id === updated.id ? updated : it));
+              this.setState({ products, selectedProduct: updated, loading: false });
+            },
+            error: () => {
+              const products = this._state$.value.products.map((it) => (it.id === p.id ? p : it));
+              this.setState({ products, selectedProduct: p, loading: false });
+            },
+          });
+        } else {
+          const products = this._state$.value.products.map((it) => (it.id === p.id ? p : it));
+          this.setState({ products, selectedProduct: p, loading: false });
+        }
+      },
+      error: () => this.setState({ loading: false }),
+    });
+  }
+
   updateProduct(id: number, input: AdminProductInput) {
     this.setState({ loading: true });
     this.service.update(id, input).subscribe({

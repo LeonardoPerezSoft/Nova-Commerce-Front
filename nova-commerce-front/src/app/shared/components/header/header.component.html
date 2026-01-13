@@ -11,16 +11,18 @@
     <!-- Navegación principal -->
     <nav class="nc-header__nav">
       <ul class="nc-header__nav-list">
-        <li class="nc-header__nav-item">
-          <a routerLink="/products" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
-            Productos
-          </a>
-        </li>
-        <li class="nc-header__nav-item">
-          <a routerLink="/orders" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
-            Mis Órdenes
-          </a>
-        </li>
+        <ng-container *ngIf="userFacade.isAuthenticated$ | async">
+          <li class="nc-header__nav-item">
+            <a routerLink="/products" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
+              Productos
+            </a>
+          </li>
+          <li class="nc-header__nav-item">
+            <a routerLink="/orders" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
+              Mis Órdenes
+            </a>
+          </li>
+        </ng-container>
         <li class="nc-header__nav-item" *ngIf="userFacade.isAdmin$|async">
           <a routerLink="/admin" routerLinkActive="nc-header__nav-link--active" class="nc-header__nav-link">
             Admin
